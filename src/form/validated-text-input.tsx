@@ -65,7 +65,7 @@ export function ValidatedTextInput(
         {...registerRs(nameIdCy, validate)}
         data-cy={nameIdCy}
         valid={touchedFields[nameIdCy] && !errors[nameIdCy]}
-        invalid={!touchedFields[nameIdCy] || !!errors[nameIdCy]}
+        invalid={!!errors[nameIdCy]}
         onChange={updateValue}
       />
       <FormFeedback hidden={!errors[nameIdCy]}>{errors[nameIdCy]?.message}</FormFeedback>
