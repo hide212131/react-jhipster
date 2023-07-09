@@ -42,6 +42,14 @@ export function ValidatedTextInput(
   const placeHolderValue = inputPlaceholderKey ? translate(inputPlaceholderKey) : '';
   const labelName = `${nameIdCy}Label`;
 
+  // Change 'ref' to 'innerRef' to make reactstrap compatible with react-hook-form.
+  const registerRs = (name: string, options = {}) => {
+    const useFormRegisterReturn = register(name, options);
+    const innerRef = useFormRegisterReturn.ref;
+    delete useFormRegisterReturn.ref;
+    return { ...useFormRegisterReturn, innerRef };
+  };
+
   return (
     <FormGroup>
       <Label id={labelName} for={nameIdCy}>
@@ -54,7 +62,7 @@ export function ValidatedTextInput(
         type={type}
         readOnly={readOnly}
         disabled={disabled}
-        {...register(nameIdCy, validate)}
+        {...registerRs(nameIdCy, validate)}
         data-cy={nameIdCy}
         valid={touchedFields[nameIdCy] && !errors[nameIdCy]}
         invalid={!touchedFields[nameIdCy] || !!errors[nameIdCy]}
