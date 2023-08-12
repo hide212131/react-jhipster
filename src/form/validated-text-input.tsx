@@ -18,6 +18,23 @@ export interface ValidatedTextInputFieldProps {
   disabled?: boolean,
   updateValueOverrideMethod?: (event: any) => void,
 }
+
+/**
+ * Change 'ref' to 'innerRef' to make reactstrap compatible with react-hook-form.
+ * @see https://github.com/orgs/react-hook-form/discussions/8242
+ * @see https://stackoverflow.com/questions/66588407/react-hooks-form-conflict-with-reactstrap
+ * @param register - React-hook-form's register function
+ * @param name - Name of the input being registered
+ * @param options - Validation options
+ * @returns Modified register object with 'innerRef' instead of 'ref'
+ */
+export const registerReactstrap = (register: UseFormRegister<FieldValues>, name: string, options?: RegisterOptions<FieldValues, string>) => {
+  const useFormRegisterReturn = register(name, options);
+  const innerRef = useFormRegisterReturn.ref;
+  delete useFormRegisterReturn.ref;
+  return { ...useFormRegisterReturn, innerRef };
+};
+
 export function ValidatedTextInput(
   {
     register,
@@ -42,14 +59,6 @@ export function ValidatedTextInput(
   const placeHolderValue = inputPlaceholderKey ? translate(inputPlaceholderKey) : '';
   const labelName = `${nameIdCy}Label`;
 
-  // Change 'ref' to 'innerRef' to make reactstrap compatible with react-hook-form.
-  const registerRs = (name: string, options = {}) => {
-    const useFormRegisterReturn = register(name, options);
-    const innerRef = useFormRegisterReturn.ref;
-    delete useFormRegisterReturn.ref;
-    return { ...useFormRegisterReturn, innerRef };
-  };
-
   return (
     <FormGroup>
       <Label id={labelName} for={nameIdCy}>
@@ -62,7 +71,7 @@ export function ValidatedTextInput(
         type={type}
         readOnly={readOnly}
         disabled={disabled}
-        {...registerRs(nameIdCy, validate)}
+        {...registerReactstrap(register, nameIdCy, validate)}
         data-cy={nameIdCy}
         valid={touchedFields[nameIdCy] && !errors[nameIdCy]}
         invalid={!!errors[nameIdCy]}
